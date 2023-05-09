@@ -66,3 +66,20 @@ ssrBuild: resolveApp('dist') // 웹팩 처리 후 저장 경로
 ### 서버 코드 작성
 
 Express라는 Node.js 웹 프레임워크 사용해 웹 서버 만들기 ; 해당 프레임워크가 사용률 높고, 추후 정적 파일들 호스팅할때도 쉽게 구현 가능하기 때문 - yarn add express
+
+### 정적 파일 제공
+
+1. Express에 내장되어 있는 static 미들웨어를 사용해 서버를 통해 build에 있는 JS, CSS 정적 파일들에 접근할 수 있도록 해 줌
+
+```
+const serve = express.static(path.resolve('./build'), {
+  index: false // "/" 경로에서 index.html을 보여 주지 않도록 설정
+});
+
+app.use(serve); // 순서 중요, serverRender 전에 위치해야 함
+app.use(serverRender);
+```
+
+2. JS와 CSS 파일 불러오도록 html에 코드 삽입
+   불러와야 하는 파일 이름은 매번 빌드할 때마다 바뀌기 때문에 빌드 후 만들어지는 asset-manifest.json 파일 참고해 불러오도록 작성
+   ; yarn buil 명령어 실행 후 build 디렉터리의 asset-manifest.json
